@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำนวณเวลาเข้าเวร</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+        
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #7FFFD4 0%, #48D1CC 100%);
+            min-height: 100vh;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+
+        .input-focus:focus {
+            box-shadow: 0 0 0 3px rgba(127, 255, 212, 0.5);
+        }
+
+        .button-hover {
+            transition: all 0.3s ease;
+        }
+
+        .button-hover:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+    <div class="glass-effect w-full max-w-lg rounded-3xl shadow-2xl p-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-semibold text-gray-800 mb-2">คำนวณเวลาเข้าเวร</h1>
+            <p class="text-gray-600">กรอกเวลาเข้า-ออกเวรเพื่อคำนวณระยะเวลาการทำงาน</p>
+        </div>
+
+        <!-- Input Form -->
+        <div class="space-y-6">
+            <div>
+                <label class="block text-gray-700 text-sm font-medium mb-2" for="startTime">
+                    เวลาเข้าเวร
+                </label>
+                <div class="relative">
+                    <input type="text" id="startTime" 
+                        class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                        placeholder="ตัวอย่าง: 11:32">
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-medium mb-2" for="endTime">
+                    เวลาออกเวร
+                </label>
+                <div class="relative">
+                    <input type="text" id="endTime" 
+                        class="input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                        placeholder="ตัวอย่าง: 13:53">
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculate Button -->
+            <button onclick="calculateTime()" 
+                class="button-hover w-full bg-teal-500 text-white font-medium py-3 rounded-lg shadow-lg hover:bg-teal-600 focus:outline-none">
+                คำนวณเวลา
+            </button>
+
+            <!-- Result Display -->
+            <div class="mt-6 text-center">
+                <div id="result" class="text-xl font-medium text-gray-800 mb-4">ผลลัพธ์จะปรากฏที่นี่</div>
+                <button id="copyBtn" onclick="copyResult()" style="display:none"
+                    class="button-hover inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:outline-none">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    คัดลอกผลลัพธ์
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateTime() {
+            const startTime = document.getElementById("startTime").value.trim();
+            const endTime = document.getElementById("endTime").value.trim();
+
+            if (!/^\d{1,2}:\d{2}$/.test(startTime) || !/^\d{1,2}:\d{2}$/.test(endTime)) {
+                document.getElementById("result").textContent = "กรุณาใส่เวลาในรูปแบบ HH:MM";
+                document.getElementById("copyBtn").style.display = "none";
+                return;
+            }
+
+            const [startHour, startMinute] = startTime.split(":").map(Number);
+            const [endHour, endMinute] = endTime.split(":").map(Number);
+
+            const startTotalMinutes = startHour * 60 + startMinute;
+            const endTotalMinutes = endHour * 60 + endMinute;
+            let durationMinutes = endTotalMinutes - startTotalMinutes;
+
+            if (durationMinutes < 0) {
+                durationMinutes += 24 * 60;
+            }
+
+            const hours = Math.floor(durationMinutes / 60);
+            const minutes = durationMinutes % 60;
+
+            const resultText = `${hours} ชั่วโมง ${minutes} นาที`;
+            document.getElementById("result").textContent = resultText;
+
+            const copyBtn = document.getElementById("copyBtn");
+            copyBtn.style.display = "inline-flex";
+            copyBtn.setAttribute("data-clipboard-text", resultText);
+        }
+
+        function copyResult() {
+            const resultText = document.getElementById("result").textContent;
+            navigator.clipboard.writeText(resultText).then(() => {
+                // Create and show toast notification
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transition-opacity duration-300';
+                toast.textContent = 'คัดลอกผลลัพธ์แล้ว';
+                document.body.appendChild(toast);
+
+                // Remove toast after 3 seconds
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>
