@@ -1,85 +1,99 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>ระบบคำนวณเวลา</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <title>ระบบคำนวณเวลา</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-6">
-  <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-8">
-    <h1 class="text-3xl font-extrabold mb-6 text-center text-gray-800">ระบบคำนวณเวลา</h1>
+    <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-3xl font-extrabold mb-6 text-center text-gray-800">ระบบคำนวณเวลา</h1>
 
-    <div class="mb-6">
-      <label for="name" class="block text-lg font-medium text-gray-700 mb-2">ชื่อ:</label>
-      <input type="text" id="name" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="ใส่ชื่อ">
+        <div class="mb-6">
+            <label for="name" class="block text-lg font-medium text-gray-700 mb-2">ชื่อ:</label>
+            <input type="text" id="name"
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                placeholder="ใส่ชื่อ">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+                <label for="clockIn" class="block text-lg font-medium text-gray-700 mb-2">เวลาเข้างาน:</label>
+                <input type="text" id="clockIn"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="13:00">
+            </div>
+            <div>
+                <label for="clockOut" class="block text-lg font-medium text-gray-700 mb-2">เวลาเลิกงาน:</label>
+                <input type="text" id="clockOut"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="14:00">
+            </div>
+        </div>
+
+        <div class="flex justify-center mb-6">
+            <button onclick="calculateTime()"
+                class="bg-green-600 text-white py-2 px-6 rounded-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">คำนวณ</button>
+        </div>
+
+        <div class="border-t border-gray-200 pt-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">หน่วยงาน</h2>
+            <div id="employee-details" class="space-y-4">
+                <!-- รายละเอียดพนักงานจะแสดงที่นี่ -->
+            </div>
+        </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 mb-6">
-      <div>
-        <label for="clockIn" class="block text-lg font-medium text-gray-700 mb-2">เวลาเข้างาน:</label>
-        <input type="text" id="clockIn" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="13:00">
-      </div>
-      <div>
-        <label for="clockOut" class="block text-lg font-medium text-gray-700 mb-2">เวลาเลิกงาน:</label>
-        <input type="text" id="clockOut" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="14:00">
-      </div>
-    </div>
+    <script>
+        const employeeDetails = {};
 
-    <div class="flex justify-center mb-6">
-      <button onclick="calculateTime()" class="bg-green-600 text-white py-2 px-6 rounded-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">คำนวณ</button>
-    </div>
+        function calculateTime() {
+            const name = document.getElementById("name").value.trim();
+            const clockInTime = document.getElementById("clockIn").value;
+            const clockOutTime = document.getElementById("clockOut").value;
 
-    <div class="border-t border-gray-200 pt-6">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">หน่วยงาน</h2>
-      <div id="employee-details" class="space-y-4">
-        <!-- รายละเอียดพนักงานจะแสดงที่นี่ -->
-      </div>
-    </div>
-  </div>
+            if (!name || !clockInTime || !clockOutTime) {
+                alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+                return;
+            }
 
-  <script>
-    const employeeDetails = {};
+            const [clockInHours, clockInMinutes] = clockInTime.split(":").map(Number);
+            const [clockOutHours, clockOutMinutes] = clockOutTime.split(":").map(Number);
 
-    function calculateTime() {
-      const name = document.getElementById("name").value.trim();
-      const clockInTime = document.getElementById("clockIn").value;
-      const clockOutTime = document.getElementById("clockOut").value;
+            // คำนวณเวลาเข้างานและเลิกงานในหน่วยนาที
+            let clockInTotalMinutes = clockInHours * 60 + clockInMinutes;
+            let clockOutTotalMinutes = clockOutHours * 60 + clockOutMinutes;
 
-      if (!name || !clockInTime || !clockOutTime) {
-        alert("กรุณากรอกข้อมูลให้ครบถ้วน");
-        return;
-      }
+            // ตรวจสอบกรณีข้ามวัน
+            if (clockOutTotalMinutes <= clockInTotalMinutes) {
+                clockOutTotalMinutes += 24 * 60; // บวกเพิ่ม 24 ชั่วโมง
+            }
 
-      const [clockInHours, clockInMinutes] = clockInTime.split(":").map(Number);
-      const [clockOutHours, clockOutMinutes] = clockOutTime.split(":").map(Number);
+            const totalMinutes = clockOutTotalMinutes - clockInTotalMinutes;
 
-      const totalMinutes = (clockOutHours * 60 + clockOutMinutes) - (clockInHours * 60 + clockInMinutes);
+            if (name in employeeDetails) {
+                employeeDetails[name].minutes += totalMinutes;
+            } else {
+                employeeDetails[name] = { minutes: totalMinutes };
+            }
 
-      if (totalMinutes <= 0) {
-        alert("เวลาเลิกงานต้องมากกว่าเวลาเข้างาน");
-        return;
-      }
+            updateEmployeeList();
+        }
 
-      if (name in employeeDetails) {
-        employeeDetails[name].minutes += totalMinutes;
-      } else {
-        employeeDetails[name] = { minutes: totalMinutes };
-      }
 
-      updateEmployeeList();
-    }
+        function updateEmployeeList() {
+            const employeeDetailsElement = document.getElementById("employee-details");
+            employeeDetailsElement.innerHTML = "";
 
-    function updateEmployeeList() {
-      const employeeDetailsElement = document.getElementById("employee-details");
-      employeeDetailsElement.innerHTML = "";
+            for (const name in employeeDetails) {
+                const totalMinutes = employeeDetails[name].minutes;
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
 
-      for (const name in employeeDetails) {
-        const totalMinutes = employeeDetails[name].minutes;
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
-
-        const employeeElement = document.createElement("div");
-        employeeElement.classList.add("flex", "items-center", "justify-between", "bg-gray-100", "p-4", "rounded-lg", "shadow-sm");
-        employeeElement.innerHTML = `
+                const employeeElement = document.createElement("div");
+                employeeElement.classList.add("flex", "items-center", "justify-between", "bg-gray-100", "p-4", "rounded-lg", "shadow-sm");
+                employeeElement.innerHTML = `
           <div>
             <p class="text-gray-800 font-semibold">${name}</p>
             <p class="text-sm text-gray-600">${hours} ชม ${minutes} นาที</p>
@@ -87,14 +101,15 @@
           <button onclick="deleteEmployee('${name}')" class="text-red-600 font-semibold hover:text-red-800">ลบ</button>
         `;
 
-        employeeDetailsElement.appendChild(employeeElement);
-      }
-    }
+                employeeDetailsElement.appendChild(employeeElement);
+            }
+        }
 
-    function deleteEmployee(name) {
-      delete employeeDetails[name];
-      updateEmployeeList();
-    }
-  </script>
+        function deleteEmployee(name) {
+            delete employeeDetails[name];
+            updateEmployeeList();
+        }
+    </script>
 </body>
+
 </html>
